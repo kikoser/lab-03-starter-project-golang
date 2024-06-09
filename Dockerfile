@@ -1,4 +1,4 @@
-FROM golang:1.16
+FROM golang:1.16 AS builder
 
 WORKDIR /app
 
@@ -12,5 +12,9 @@ COPY templates ./templates
 COPY main.go .
 
 RUN CGO_ENABLED=0 go build -o ./myapp
+FROM scratch
+
+COPY --from=builder /app/myapp /myapp
+COPY templates /templates
 
 CMD ["./myapp", "serve"]
